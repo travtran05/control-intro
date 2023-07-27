@@ -93,6 +93,8 @@ def main():
 
         print("Heading: ", np.rad2deg(yaw))
 
+        '''
+
         # calculate error
 
         # because yaw is goes to -180 on the left ...
@@ -115,7 +117,9 @@ def main():
         if 360 - np.rad2deg(error) < 180:
             error = (360 - np.rad2deg(error))*(-1)
 
-        
+        '''
+
+        error = np.arcsin(np.sin(desired_heading)-np.sin(yaw))
 
         print("Error: ", np.rad2deg(error))
 
