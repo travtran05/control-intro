@@ -119,9 +119,18 @@ def main():
 
         '''
 
-        error = np.arcsin(np.sin(desired_heading)-np.sin(yaw))
+        # error = np.arcsin(np.sin(desired_heading)-np.sin(yaw))
+        error = desired_heading - yaw
+
 
         print("Error: ", np.rad2deg(error))
+
+        if error > np.pi /2:
+            error = 1
+        elif error < -np.pi /2:
+            error = -1
+        else:
+            error = np.sin(error)
 
         output = pid.update(error, error_derivative=yaw_rate)
         print("Output: ", output)
