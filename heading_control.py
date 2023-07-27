@@ -3,6 +3,7 @@ import sys
 import signal
 from pid import PID
 import numpy as np
+import math
 
 
 def set_rc_channel_pwm(mav, channel_id, pwm=1500):
@@ -76,13 +77,15 @@ def main():
     desired_heading_deg = float(input("Enter target heading: "))
 
     # TODO: convert heading to radians
-    if desired_heading_deg > 0 and desired_heading_deg < 180:
-        desired_heading = np.deg2rad(desired_heading_deg)
-    else:
-        desired_heading = np.deg2rad(desired_heading_deg-360)
+    # if desired_heading_deg > 0 and desired_heading_deg < 180:
+    #     desired_heading = np.deg2rad(desired_heading_deg)
+    # else:
+    #     desired_heading = np.deg2rad(desired_heading_deg-360)
 
+    desired_heading = np.deg2rad(desired_heading_deg)
+    #pid = PID(6.5, 1, -10, 100)
 
-    pid = PID(6.5, 1, -10, 100)
+    pid = PID(100, 25, -10, 4)
 
     while True:
         # get yaw from the vehicle
@@ -118,16 +121,25 @@ def main():
             error = (360 - np.rad2deg(error))*(-1)
 
         '''
+        if yaw < 0: # convert the 0 to 180 to -180 to -0 mapping into a  0 to 360 mapping
+            yaw = yaw + math.pi*2
+
 
         
         error = desired_heading - yaw
 
-        if error > np.pi /2:
-            error = 1
-        elif error < -np.pi /2:
-            error = -1
-        else:
-            error = np.sin(error)
+        # if error > np.pi /2:
+        #     error = 1
+        # elif error < -np.pi /2:
+        #     error = -1
+        # else:
+        #     error = np.sin(error)
+
+
+        if error > math.pi: 
+            error = (math.pi - (error % math.pi) ) * -1 # trying to get there from the far side, so swap to the close size
+        if error < -math.pi:
+            error = error % math.pi  # error = math.pi * 2 + error, same thing but for other side
 
 
         print("Error: ", np.rad2deg(error))
