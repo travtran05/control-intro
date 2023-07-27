@@ -82,7 +82,7 @@ def main():
         desired_heading = np.deg2rad(desired_heading_deg-360)
 
 
-    pid = PID(7.5, 1, 7.5, 100)
+    pid = PID(6.5, 1, -10, 100)
 
     while True:
         # get yaw from the vehicle
@@ -93,7 +93,7 @@ def main():
 
         print("Heading: ", np.rad2deg(yaw))
 
-        
+        '''
 
         # calculate error
 
@@ -117,17 +117,17 @@ def main():
         if 360 - np.rad2deg(error) < 180:
             error = (360 - np.rad2deg(error))*(-1)
 
-        
+        '''
 
         
-        # error = desired_heading - yaw
+        error = desired_heading - yaw
 
-        # if error > np.pi /2:
-        #     error = 1
-        # elif error < -np.pi /2:
-        #     error = -1
-        # else:
-        #     error = np.sin(error)
+        if error > np.pi /2:
+            error = 1
+        elif error < -np.pi /2:
+            error = -1
+        else:
+            error = np.sin(error)
 
 
         print("Error: ", np.rad2deg(error))
