@@ -76,26 +76,37 @@ def main():
     desired_heading_deg = float(input("Enter target heading: "))
 
     # TODO: convert heading to radians
-    desired_heading = np.deg2rad(desired_heading_deg)
+    if desired_heading_deg > 0 and desired_heading_deg < 180:
+        desired_heading = np.deg2rad(desired_heading_deg)
+    else:
+        desired_heading = np.deg2rad(desired_heading_deg-360)
 
-    pid = PID(10, 0, 15, 100)
+
+    pid = PID(10, 0.1, 10, 100)
 
     while True:
         # get yaw from the vehicle
         msg = mav.recv_match(type="ATTITUDE", blocking=True)
         yaw = msg.yaw
 
-        if np.rad2deg(yaw) < 0 and np.rad2deg(yaw) >-180:
-            yaw = msg.yaw + np.deg2rad(360)
-        else:
-            yaw = msg.yaw
-
         yaw_rate = msg.yawspeed
 
         print("Heading: ", np.rad2deg(yaw))
 
         # calculate error
-        error = abs(desired_heading-yaw)
+
+        if np.rad2deg(desired_heading) > 0 and np.rad2deg(desired_heading) < 180 and np.rad2deg(yaw) > 0 and np.rad2deg(yaw) < 180:
+            error = np.deg2rad((np.rad2deg(desired_heading)-np.rad2deg(yaw))%360)
+        elif np.rad2deg(desired_heading) > 0 and np.rad2deg(desired_heading) < 180 and np.rad2deg(yaw) > -180 and np.rad2deg(yaw) < 0:
+            error = np.deg2rad((np.rad2deg(desired_heading)-(np.rad2deg(yaw)+360))%360)
+        elif np.rad2deg(desired_heading) > -180 and np.rad2deg(desired_heading) < 0 and np.rad2deg(yaw) > 0 and np.rad2deg(yaw) < 180:
+            error = np.deg2rad((np.rad2deg(desired_heading)+360-np.rad2deg(yaw))%360)
+        else:
+            error = np.deg2rad((np.rad2deg(desired_heading)-np.rad2deg(yaw))%360)
+
+        if 360 - np.rad2deg(error) < 180:
+            error = (360 - np.rad2deg(error))*(-1)
+
         
 
         print("Error: ", np.rad2deg(error))
@@ -104,7 +115,10 @@ def main():
         print("Output: ", output)
 
         # set vertical power
-        set_rotation_power(mav, -output)
+        
+        set_rotation_power(mav, output)
+
+
 
 
 if __name__ == "__main__":
