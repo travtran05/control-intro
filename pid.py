@@ -62,6 +62,10 @@ class PID:
         # TODO: Calculate and return the integral term
 
         self.integral += error * dt
+
+        if self.integral is not None:
+            self.integral = np.clip(self.integral, -self.integral_limit, self.integral_limit)
+
         return self.integral
 
 
