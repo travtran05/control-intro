@@ -93,7 +93,7 @@ def main():
 
         print("Heading: ", np.rad2deg(yaw))
 
-        '''
+        
 
         # calculate error
 
@@ -117,20 +117,21 @@ def main():
         if 360 - np.rad2deg(error) < 180:
             error = (360 - np.rad2deg(error))*(-1)
 
-        '''
+        
 
-        # error = np.arcsin(np.sin(desired_heading)-np.sin(yaw))
-        error = desired_heading - yaw
+        
+        # error = desired_heading - yaw
+
+        # if error > np.pi /2:
+        #     error = 1
+        # elif error < -np.pi /2:
+        #     error = -1
+        # else:
+        #     error = np.sin(error)
 
 
         print("Error: ", np.rad2deg(error))
 
-        if error > np.pi /2:
-            error = 1
-        elif error < -np.pi /2:
-            error = -1
-        else:
-            error = np.sin(error)
 
         output = pid.update(error, error_derivative=yaw_rate)
         print("Output: ", output)
