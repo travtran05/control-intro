@@ -61,8 +61,8 @@ class PID:
 
         # TODO: Calculate and return the integral term
 
-        integral = error * dt
-        return integral 
+        self.integral_error += error * dt
+        return integral
 
 
     def _get_derivative(self, error, dt):
@@ -76,5 +76,5 @@ class PID:
 
         # TODO: Calculate and return the derivative term
 
-        derivative = error / dt
-        return derivative 
+        derivative = (self.last_error-error) / dt
+        return derivative
