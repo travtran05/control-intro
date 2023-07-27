@@ -78,7 +78,7 @@ def main():
     # TODO: convert heading to radians
     desired_heading = np.deg2rad(desired_heading_deg)
 
-    pid = PID(7, 0, 10, 100)
+    pid = PID(10, 0, 15, 100)
 
     while True:
         # get yaw from the vehicle
@@ -95,7 +95,7 @@ def main():
         print("Heading: ", np.rad2deg(yaw))
 
         # calculate error
-        error = desired_heading-yaw
+        error = abs(desired_heading-yaw)
         
 
         print("Error: ", np.rad2deg(error))
